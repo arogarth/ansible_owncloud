@@ -1,0 +1,6 @@
+---
+# vars file for owncloud
+
+owncloud_version: "9.0.2"
+owncloud_checksum: "sha256:a75865a85936aeac6dc688addf5860a23a7f6180fc3bf4c2b4870e9d74b9323b"
+owncloud_download_url: "http://download.owncloud.org/community/owncloud-{{ owncloud_version }}.zip"

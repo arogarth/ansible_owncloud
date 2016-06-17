@@ -1,0 +1,20 @@
+
+required_packages:
+  - apache2
+  - libapache2-mod-php5
+  - php5
+  - php5-mysql
+  - php5-ldap
+  - php5-mcrypt
+  - php5-json
+  - php5-gd
+  - php5-curl
+  - mysql-server
+  - mysql-client
+  - python-mysqldb
+  - unzip
+
+apache2_user: "www-data"
+apache2_group: "www-data"
+
+apache2_service: "apache2"

@@ -1,0 +1,78 @@
+---
+# tasks file for owncloud
+
+- include_vars: "{{ item }}"
+  with_first_found:
+   - "{{ ansible_distribution | lower }}.yml"
+   - "{{ ansible_os_family | lower }}.yml"
+   - "default.yml"
+
+- name: Install Required packages
+  package: name="{{ item }}"
+  with_items: "{{ required_packages }}"
+
+
+################################################################################
+##
+## Setup MySQL Database
+##
+################################################################################
+
+- name: Add MySQL Database
+  mysql_db:
+    name: "{{ owncloud_db_name }}"
+
+- name: Add MySQL User for owncloud
+  mysql_user:
+    name: "{{ owncloud_db_username }}"
+    password: "{{ owncloud_db_password }}"
+    priv: "{{ owncloud_db_name }}.*:ALL"
+
+################################################################################
+##
+## Download and setup owncloud
+##
+################################################################################
+
+- name: Download owncloud
+  get_url:
+    checksum: "{{ owncloud_checksum }}"
+    url: "{{ owncloud_download_url }}"
+    dest: /tmp
+  register: download
+
+- name: Extract owncloud
+  unarchive:
+    src: "{{ download.dest }}"
+    dest: "{{ owncloud_www_directory | dirname }}"
+    copy: no
+  ignore_errors: yes
+
+- name: Set owncloud user and permissions
+  file:
+    path: "{{ owncloud_www_directory }}"
+    owner: "{{ apache2_user }}"
+    group: "{{ apache2_group }}"
+    recurse: yes
+
+# - name: Install owncloud config
+#   template:
+
+
+################################################################################
+##
+## Setup Apache2
+##
+################################################################################
+
+- name: Install Apache Template
+  template:
+    src: etc/apache2/sites-available/owncloud.conf
+    dest: /etc/apache2/sites-available/owncloud.conf
+  notify: reload apache2
+
+- name: Active owncloud page
+  shell: a2ensite owncloud.conf
+  register: site_enabled
+  changed_when: site_enabled.stdout != "Site owncloud.conf already enabled"
+  notify: restart apache2

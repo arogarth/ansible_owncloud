@@ -1,0 +1,13 @@
+---
+# defaults file for owncloud
+
+owncloud_www_directory: /var/www/owncloud
+owncloud_data_directory: "{{ owncloud_www_directory }}/data"
+owncloud_url: localhost
+
+owncloud_db_name: "owncloud"
+owncloud_db_username: "owncloud"
+owncloud_db_password: "owncloud"
+owncloud_db_hostname: "localhost"
+
+owncloud_lang: 'en'
